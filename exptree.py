@@ -1,4 +1,5 @@
-# Thomas Sadowski
+# Thomas Sadowski's Expression Tree Software
+
 # checks if a string is a digit
 def isdi(c):
 	for i in c:
@@ -40,14 +41,24 @@ def intopost(exp):
 	return post
 # conventional node for a binary tree, with one extra variable
 class Node:
-	__slots__ = ['left', 'right', 'data', 'alti']
+	__slots__ = ['left', 'right', 'data', 'leftsh', 'leftsp', 'rightsh', 'rightsp', 'size', 'alti']
 	def __init__(self, data):
 		self.left = None
 		self.right = None
-		self.data = data
-		# alti = altitude--however, it is only useful for denoting the height of the tree 
-		# which is found at the root node
+		self.data = str(data)
+		self.leftsh = 0
+		self.leftsp = 0
+		self.rightsh = 0
+		self.rightsp = 0
+		self.size = len(self.data)
+		# alti = altitude of the node relative to its lowest subtree
 		self.alti = 0 
+# sets values to be used for printing the tree
+def setbranchwidths(n):
+	n.leftsh = n.left.rightsh + n.left.rightsp + n.left.size
+	n.leftsp = n.left.leftsh + n.left.leftsp
+	n.rightsh = n.right.leftsh + n.right.leftsp + n.right.size
+	n.rightsp = n.right.rightsh + n.right.rightsp
 # builds the expression tree out of nodes of class Node
 def exptree(exp):
 	stack = list()
@@ -56,27 +67,51 @@ def exptree(exp):
 		if isdi(i):
 			stack.append(n)
 		else:
-			r = stack.pop()
-			n.right = r
-			l = stack.pop()
-			n.left = l
-			n.alti = max(r.alti, l.alti) + 1
+			n.right = stack.pop()
+			n.left = stack.pop()
+			n.alti = max(n.right.alti, n.left.alti) + 1
+			setbranchwidths(n)
 			stack.append(n)
 	return stack.pop()	
+
 # performs a level-order traversal on the tree
-def levelorder(tree):
+def listoflevels(tree):
+	levels = list()
 	for i in range(0, tree.alti + 1):
-		printlevel(tree, i)
-		print()
+		level = list()
+		getlevel(tree, i, level)
+		levels.append(level)
+	return levels
 # helper for levelorder
-def printlevel(tree, level):
+def getlevel(tree, i, level):
 	if tree is None:
 		return
-	if level == 0:
-		print(tree.data, end=" ")
+	if i == 0:
+		level.append(tree)
 	else:
-		printlevel(tree.left, level - 1)
-		printlevel(tree.right, level -1)
+		getlevel(tree.left, i - 1, level)
+		getlevel(tree.right, i - 1, level)
+# outputs the tree
+def treetostr(treelist):
+	treestr = ""
+	for i in range(0, len(treelist)):
+		levelstr = ""
+		arms = ""
+		for j in treelist[i]:
+			#if isop(j.data):
+			levelstr += " " * j.leftsp + "_" * j.leftsh
+			levelstr += j.data
+			levelstr += "_" * j.rightsh + " " * (j.rightsp + 1)
+			arm = ""
+			if isop(j.data): 
+				arms += " " * j.leftsp + "|" + " " * j.leftsh
+				arms += " " * (j.rightsh - 1) + "|" + " " * (j.rightsp + 1)
+			else:
+				arms += " " * j.leftsp + " " * j.size + " " * j.leftsh
+				arms += " " * (j.rightsh - 1) + " " * (j.rightsp + 1)
+		treestr += levelstr + "\n"
+		treestr += arms + "\n"
+	return treestr
 # performs an in-order traversal on the tree
 def inorder(tree):
 	if tree is not None:
@@ -128,7 +163,7 @@ if __name__ == "__main__":
 	n = exptree(exp)	
 	
 	print("Expression tree: ")
-	levelorder(n)
+	print(treetostr(listoflevels(n)))
 	print("Pre-order traversal / prefix / polish notation: ")
 	preorder(n)
 	print("\nPost-order traversal / postfix / reverse polish notation: ")
