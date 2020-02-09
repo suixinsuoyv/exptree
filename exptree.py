@@ -22,7 +22,7 @@ def prec(c):
 		return 3
 	else:
 		return 0
-# builds the expression tree out of nodes of class Node
+# uses an infix expression to build an expression tree 
 def exptree(exp):
 	nums = list()
 	ops = list()

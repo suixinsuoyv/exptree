@@ -17,7 +17,7 @@ class Node:
 		self.alti = 0 
 		# values can be empty string, "left", or "right" depending on where the node is relative to its parent
 		self.place = ""
-# sets values to be used for printing the tree
+# sets values to be used for drawing the tree
 def setbranchwidths(n):
 	if n.left is not None and n.right is not None:
 		n.leftsh = n.left.rightsh + n.left.rightsp + n.left.size
@@ -74,7 +74,7 @@ def drawtr(node, matrix, i, j):
 				matrix[i+1][j2] = "|"
 			j2 -= 1
 		drawtr(node.left, matrix, i + 2, j2 + 1)
-# merge trees
+# attaches a parent node to its child nodes
 def mergetrees(t, r, l):
 	t.right = r
 	t.right.place = "right"
@@ -87,6 +87,7 @@ def inorder(tree):
 	l = list()
 	inord(tree, l)
 	return l
+# helper for inorder
 def inord(tree, l):
 	if tree is not None:
 		inord(tree.left, l)
@@ -97,6 +98,7 @@ def preorder(tree):
 	l = list()
 	preord(tree, l)
 	return l
+# helper for preorder
 def preord(tree, l):
 	if tree is not None:
 		l.append(tree.data)
@@ -107,6 +109,7 @@ def postorder(tree):
 	l = list()
 	postord(tree, l)
 	return l
+# helper for postorder
 def postord(tree, l):
 	if tree is not None:
 		postord(tree.left, l)
