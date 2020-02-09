@@ -101,16 +101,16 @@ def drawtr(node, matrix, i, j):
 		while j1 > j - node.size - node.leftsh:
 			print(i, j1, "_")
 			matrix[i][j1] = "_"
-			if j1 == j - node.size - node.leftsh - 1:
+			if j1 == j - node.size - node.leftsh + 1:
 				print(i+1, j1, "|")
 				matrix[i+1][j1] = "|"
 			j1 -= 1
 		drawtr(node.left, matrix, i + 2, j1 + 1)
 		j2 = j + 1
-		while j2 < j + node.rightsh:
+		while j2 <= j + node.rightsh:
 			print(i, j2, "_")
 			matrix[i][j2] = "_"
-			if j2 == j + node.rightsh - 1:
+			if j2 == j + node.rightsh:
 				print(i+1, j2, "|")
 				matrix[i+1][j2] = "|"
 			j2 += 1
@@ -133,7 +133,7 @@ def drawtr(node, matrix, i, j):
 		while j2 >= j - node.leftsh:
 			print(i, j2, "_")
 			matrix[i][j2] = "_"
-			if j2 == j - node.leftsh - 1:
+			if j2 == j - node.leftsh:
 				print(i+1, j2, "|")
 				matrix[i+1][j2] = "|"
 			j2 -= 1
