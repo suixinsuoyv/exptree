@@ -155,7 +155,7 @@ def postorder(tree):
 	if tree is not None:
 		postorder(tree.left)
 		postorder(tree.right)
-		print(tree.data, tree.place ,end=" ")
+		print(tree.data, end=" ")
 
 def evaluate(exp):
 	stack = list()
