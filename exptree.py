@@ -41,7 +41,7 @@ def intopost(exp):
 	return post
 # conventional node for a binary tree, with one extra variable
 class Node:
-	__slots__ = ['left', 'right', 'data', 'leftsh', 'leftsp', 'rightsh', 'rightsp', 'size', 'alti']
+	__slots__ = ['left', 'right', 'data', 'leftsh', 'leftsp', 'rightsh', 'rightsp', 'size', 'alti', 'place']
 	def __init__(self, data):
 		self.left = None
 		self.right = None
@@ -53,6 +53,7 @@ class Node:
 		self.size = len(self.data)
 		# alti = altitude of the node relative to its lowest subtree
 		self.alti = 0 
+		self.place = ""
 # sets values to be used for printing the tree
 def setbranchwidths(n):
 	n.leftsh = n.left.rightsh + n.left.rightsp + n.left.size
@@ -68,50 +69,75 @@ def exptree(exp):
 			stack.append(n)
 		else:
 			n.right = stack.pop()
+			n.right.place = "right"
 			n.left = stack.pop()
+			n.left.place = "left"
 			n.alti = max(n.right.alti, n.left.alti) + 1
 			setbranchwidths(n)
 			stack.append(n)
 	return stack.pop()	
-
-# performs a level-order traversal on the tree
-def listoflevels(tree):
-	levels = list()
-	for i in range(0, tree.alti + 1):
-		level = list()
-		getlevel(tree, i, level)
-		levels.append(level)
-	return levels
-# helper for levelorder
-def getlevel(tree, i, level):
-	if tree is None:
+# draws tree
+def drawtree(root):
+	row = 2*root.alti + 1
+	col = root.leftsp + root.leftsh + root.size + root.rightsh + root.rightsp
+	print(row, col)
+	matrix = [[" "]*col for i in range(row)]
+	j = root.leftsp + root.leftsh
+	drawtr(root, matrix, 0, j)
+	for i in matrix:
+		for j in i:
+			print(j, end="")
+		print()
+# draws tree for real
+def drawtr(node, matrix, i, j):
+	if node == None:
 		return
-	if i == 0:
-		level.append(tree)
+	if node.place == "right":
+		j1 = j
+		while j1 > j - node.size:
+			print(i, j1, node.data[j1 - j + node.size - 1])
+			matrix[i][j1] = node.data[j1 - j + node.size - 1]
+			j1 -= 1
+		while j1 > j - node.size - node.leftsh:
+			print(i, j1, "_")
+			matrix[i][j1] = "_"
+			if j1 == j - node.size - node.leftsh - 1:
+				print(i+1, j1, "|")
+				matrix[i+1][j1] = "|"
+			j1 -= 1
+		drawtr(node.left, matrix, i + 2, j1 + 1)
+		j2 = j + 1
+		while j2 < j + node.rightsh:
+			print(i, j2, "_")
+			matrix[i][j2] = "_"
+			if j2 == j + node.rightsh - 1:
+				print(i+1, j2, "|")
+				matrix[i+1][j2] = "|"
+			j2 += 1
+		drawtr(node.right, matrix, i + 2, j2 - 1)
 	else:
-		getlevel(tree.left, i - 1, level)
-		getlevel(tree.right, i - 1, level)
-# outputs the tree
-def treetostr(treelist):
-	treestr = ""
-	for i in range(0, len(treelist)):
-		levelstr = ""
-		arms = ""
-		for j in treelist[i]:
-			#if isop(j.data):
-			levelstr += " " * j.leftsp + "_" * j.leftsh
-			levelstr += j.data
-			levelstr += "_" * j.rightsh + " " * (j.rightsp + 1)
-			arm = ""
-			if isop(j.data): 
-				arms += " " * j.leftsp + "|" + " " * j.leftsh
-				arms += " " * (j.rightsh - 1) + "|" + " " * (j.rightsp + 1)
-			else:
-				arms += " " * j.leftsp + " " * j.size + " " * j.leftsh
-				arms += " " * (j.rightsh - 1) + " " * (j.rightsp + 1)
-		treestr += levelstr + "\n"
-		treestr += arms + "\n"
-	return treestr
+		j1 = j
+		while j1 < j + node.size:
+			print(i, j1, node.data[j1 - j])
+			matrix[i][j1] = node.data[j1 - j]
+			j1 += 1
+		while j1 < j + node.size + node.rightsh:
+			print(i, j1, "_")
+			matrix[i][j1] = "_"
+			if j1 == j + node.size + node.rightsh - 1:
+				print(i+1, j1, "|")
+				matrix[i+1][j1] = "|"
+			j1 += 1
+		drawtr(node.right, matrix, i + 2, j1 - 1)
+		j2 = j - 1
+		while j2 >= j - node.leftsh:
+			print(i, j2, "_")
+			matrix[i][j2] = "_"
+			if j2 == j - node.leftsh - 1:
+				print(i+1, j2, "|")
+				matrix[i+1][j2] = "|"
+			j2 -= 1
+		drawtr(node.left, matrix, i + 2, j2 + 1)
 # performs an in-order traversal on the tree
 def inorder(tree):
 	if tree is not None:
@@ -129,7 +155,7 @@ def postorder(tree):
 	if tree is not None:
 		postorder(tree.left)
 		postorder(tree.right)
-		print(tree.data, end=" ")
+		print(tree.data, tree.place ,end=" ")
 
 def evaluate(exp):
 	stack = list()
@@ -163,7 +189,7 @@ if __name__ == "__main__":
 	n = exptree(exp)	
 	
 	print("Expression tree: ")
-	print(treetostr(listoflevels(n)))
+	drawtree(n)
 	print("Pre-order traversal / prefix / polish notation: ")
 	preorder(n)
 	print("\nPost-order traversal / postfix / reverse polish notation: ")
@@ -172,5 +198,4 @@ if __name__ == "__main__":
 	inorder(n)
 	print("\nEvaluation of expression: ")
 	print(evaluate(exp))
-	
 
