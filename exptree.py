@@ -22,39 +22,27 @@ def prec(c):
 		return 3
 	else:
 		return 0
-# converts infix expression to postfix expression
-def intopost(exp):
-	stack = list()
-	post = list()
-	stack.append('!')
-	for i in exp:
-		if isop(i):
-			while prec(i) <= prec(stack[len(stack)-1]):	
-				post.append(stack.pop())
-			stack.append(i)
-		elif isnum(i):
-			post.append(i)
-		else:
-			raise Exception("There are either invalid characters or improper spacing... ")
-	while not (len(stack)-1) == 0:
-		post.append(stack.pop())
-	return post
 # builds the expression tree out of nodes of class Node
 def exptree(exp):
-	stack = list()
+	nums = list()
+	ops = list()
+	bottom = bt.Node("!")
+	ops.append(bottom)
 	for i in exp:
 		n = bt.Node(i)
 		if isnum(i):
-			stack.append(n)
+			nums.append(n)
 		else:
-			n.right = stack.pop()
-			n.right.place = "right"
-			n.left = stack.pop()
-			n.left.place = "left"
-			n.alti = max(n.right.alti, n.left.alti) + 1
-			bt.setbranchwidths(n)
-			stack.append(n)
-	return stack.pop()	
+			while prec(i) <= prec(ops[len(ops)-1].data):
+				t = ops.pop()
+				bt.mergetrees(t, nums.pop(), nums.pop())
+				nums.append(t)
+			ops.append(n)
+	while len(ops) > 1:
+		t = ops.pop()
+		bt.mergetrees(t, nums.pop(), nums.pop())
+		nums.append(t)
+	return nums.pop()	
 # evaluates a postfix expression
 def evaluate(exp):
 	stack = list()
@@ -88,17 +76,20 @@ if __name__ == "__main__":
 	print("Enter an infix expression delimited by spaces (integers only). ")
 	exp = input()
 	exp = exp.split()
-	exp = intopost(exp)
 	n = exptree(exp)	
 	
 	print("Expression tree: ")
 	bt.drawtree(n)
 	print("Pre-order traversal / prefix / polish notation: ")
-	bt.preorder(n)
+	for i in bt.preorder(n):
+		print(i, end=" ")
 	print("\nPost-order traversal / postfix / reverse polish notation: ")
-	bt.postorder(n)
+	exp = bt.postorder(n)
+	for i in exp:
+		print(i, end=" ")
 	print("\nIn-order traversal / infix notation: ")
-	bt.inorder(n)
+	for i in bt.inorder(n):
+		print(i, end=" ")
 	print("\nEvaluation of expression: ")
 	print(evaluate(exp))
 

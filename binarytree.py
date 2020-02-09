@@ -74,21 +74,41 @@ def drawtr(node, matrix, i, j):
 				matrix[i+1][j2] = "|"
 			j2 -= 1
 		drawtr(node.left, matrix, i + 2, j2 + 1)
+# merge trees
+def mergetrees(t, r, l):
+	t.right = r
+	t.right.place = "right"
+	t.left = l
+	t.left.place = "left"
+	t.alti = max(t.right.alti, t.left.alti) + 1
+	setbranchwidths(t)
 # performs an in-order traversal on the tree
 def inorder(tree):
+	l = list()
+	inord(tree, l)
+	return l
+def inord(tree, l):
 	if tree is not None:
-		inorder(tree.left)
-		print(tree.data, end=" ")
-		inorder(tree.right)
+		inord(tree.left, l)
+		l.append(tree.data)
+		inord(tree.right, l)
 # performs a pre-order traversal on the tree
 def preorder(tree):
+	l = list()
+	preord(tree, l)
+	return l
+def preord(tree, l):
 	if tree is not None:
-		print(tree.data, end=" ")
-		preorder(tree.left)
-		preorder(tree.right)
+		l.append(tree.data)
+		preord(tree.left, l)
+		preord(tree.right, l)
 # performs a post-order traversal on the tree
 def postorder(tree):
+	l = list()
+	postord(tree, l)
+	return l
+def postord(tree, l):
 	if tree is not None:
-		postorder(tree.left)
-		postorder(tree.right)
-		print(tree.data, end=" ")
+		postord(tree.left, l)
+		postord(tree.right, l)
+		l.append(tree.data)
