@@ -73,23 +73,28 @@ def operate(a, b, op):
 		return 1
 # main 
 if __name__ == "__main__":
-	print("Enter an infix expression delimited by spaces (integers only). ")
-	exp = input()
-	exp = exp.split()
-	n = exptree(exp)	
+	while True:
+		print("Enter an infix expression delimited by spaces (integers only). ")
+		exp = input()
+		exp = exp.split()
+		n = exptree(exp)	
 	
-	print("Expression tree: ")
-	bt.drawtree(n)
-	print("Pre-order traversal / prefix / polish notation: ")
-	for i in bt.preorder(n):
-		print(i, end=" ")
-	print("\nPost-order traversal / postfix / reverse polish notation: ")
-	exp = bt.postorder(n)
-	for i in exp:
-		print(i, end=" ")
-	print("\nIn-order traversal / infix notation: ")
-	for i in bt.inorder(n):
-		print(i, end=" ")
-	print("\nEvaluation of expression: ")
-	print(evaluate(exp))
+		print("Expression tree: ")
+		bt.drawtree(n)
+		print("Pre-order traversal / prefix / polish notation: ")
+		for i in bt.preorder(n):
+			print(i, end=" ")
+		print("\nPost-order traversal / postfix / reverse polish notation: ")
+		exp = bt.postorder(n)
+		for i in exp:
+			print(i, end=" ")
+		print("\nIn-order traversal / infix notation: ")
+		for i in bt.inorder(n):
+			print(i, end=" ")
+		print("\nEvaluation of expression: ")
+		print(evaluate(exp))
+		print("Enter 'repeat' to enter another expression. \nEnter anything else to leave the display... ")
+		if input() != "repeat":
+			break
+
 
