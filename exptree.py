@@ -93,7 +93,7 @@ if __name__ == "__main__":
 			print(i, end=" ")
 		print("\nEvaluation of expression: ")
 		print(evaluate(exp))
-		print("Enter 'repeat' to enter another expression. \nEnter anything else to leave the display... ")
+		print("Enter 'repeat' to enter another expression. \nPress ENTER to leave the program. ")
 		if input() != "repeat":
 			break
 

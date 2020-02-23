@@ -31,6 +31,7 @@ def drawtree(root):
 	matrix = [[" "]*col for x in range(row)]
 	drawtr(root, matrix, 0, root.leftsp + root.leftsh)
 	for i in matrix:
+		print("\t", end="")
 		for j in i:
 			print(j, end="")
 		print()
